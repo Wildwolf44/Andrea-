@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Andrea</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: #0d0015;
+    font-family: 'Quicksand', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .bg {
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, #2a0040 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 80%, #001a40 0%, transparent 55%),
+      #0d0015;
+  }
+
+  /* floating particles */
+  .particles { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+  .p {
+    position: absolute; border-radius: 50%;
+    animation: pfloat linear infinite; opacity: 0;
+  }
+  @keyframes pfloat {
+    0%   { transform: translateY(110vh); opacity: 0; }
+    10%  { opacity: 0.5; }
+    90%  { opacity: 0.2; }
+    100% { transform: translateY(-10vh); opacity: 0; }
+  }
+
+  /* SETUP */
+  #setup {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: #0d0015;
+  }
+
+  .scard {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,130,200,0.3);
+    border-radius: 24px;
+    padding: 44px 36px;
+    max-width: 400px; width: 90%;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(255,100,180,0.1);
+  }
+
+  .sname {
+    font-family: 'Pacifico', cursive;
+    font-size: 44px;
+    background: linear-gradient(135deg, #ff80c0, #c084fc, #60a5fa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+
+  .stag {
+    color: rgba(255,180,220,0.4);
+    font-size: 11px; letter-spacing: 3px;
+    margin-bottom: 32px;
+  }
+
+  .slbl {
+    color: rgba(255,180,220,0.55);
+    font-size: 12px; text-align: left;
+    margin-bottom: 8px; letter-spacing: 1px;
+  }
+
+  .sinput {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,130,200,0.2);
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    padding: 13px 16px; outline: none;
+    transition: border-color 0.3s;
+    margin-bottom: 8px;
+  }
+  .sinput:focus { border-color: rgba(255,130,200,0.6); }
+
+  .serr { color: #f87171; font-size: 12px; margin-bottom: 14px; min-height: 18px; }
+
+  .sbtn {
+    width: 100%;
+    background: linear-gradient(135deg, #ec4899, #a855f7);
+    border: none; border-radius: 14px;
+    color: #fff; font-family: 'Quicksand', sans-serif;
+    font-size: 15px; font-weight: 700;
+    padding: 15px; cursor: pointer;
+    transition: all 0.3s; letter-spacing: 1px;
+  }
+  .sbtn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(236,72,153,0.4); }
+
+  /* MAIN */
+  #main {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; width: 100%;
+    position: relative; z-index: 1;
+    gap: 28px;
+    padding: 40px 20px;
+  }
+
+  .name-top {
+    font-family: 'Pacifico', cursive;
+    font-size: 36px;
+    background: linear-gradient(135deg, #ff80c0, #c084fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* ORB */
+  .orb-wrap {
+    position: relative;
+    width: 210px; height: 210px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .ring {
+    position: absolute; border-radius: 50%;
+    border: 1px solid rgba(255,130,200,0.15);
+  }
+  .ring:nth-child(1) { inset: 0;  animation: rp 3s ease-in-out infinite 0s; }
+  .ring:nth-child(2) { inset: 14px; animation: rp 3s ease-in-out infinite 0.6s; }
+  .ring:nth-child(3) { inset: 28px; animation: rp 3s ease-in-out infinite 1.2s; }
+
+  @keyframes rp {
+    0%,100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+
+  .orb {
+    width: 136px; height: 136px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ff80c0, #a855f7 55%, #3b0764);
+    box-shadow: 0 0 40px rgba(255,100,180,0.35), 0 0 80px rgba(168,85,247,0.2);
+    position: relative;
+    transition: box-shadow 0.4s, transform 0.4s;
+  }
+
+  .orb::after {
+    content: '';
+    position: absolute;
+    top: 18%; left: 22%;
+    width: 30%; height: 18%;
+    background: rgba(255,255,255,0.22);
+    border-radius: 50%; filter: blur(5px);
+  }
+
+  .orb.listening {
+    background: radial-gradient(circle at 35% 35%, #93c5fd, #6366f1 55%, #1e1b4b);
+    box-shadow: 0 0 55px rgba(96,165,250,0.6), 0 0 100px rgba(99,102,241,0.3);
+    animation: lpulse 1s ease-in-out infinite;
+  }
+
+  .orb.speaking {
+    box-shadow: 0 0 55px rgba(255,100,180,0.7), 0 0 110px rgba(255,100,180,0.3);
+    animation: spulse 0.55s ease-in-out infinite;
+  }
+
+  .orb.thinking {
+    animation: tpulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes lpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+  @keyframes spulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.09)} }
+  @keyframes tpulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.03);opacity:0.7} }
+
+  /* WAVE BARS */
+  .wave {
+    display: flex; align-items: center; gap: 4px; height: 44px;
+  }
+
+  .b {
+    width: 4px; border-radius: 4px;
+    background: linear-gradient(180deg, #ff80c0, #a855f7);
+    opacity: 0.15; transition: opacity 0.3s;
+  }
+
+  .wave.listening .b {
+    opacity: 0.7;
+    background: linear-gradient(180deg, #93c5fd, #6366f1);
+    animation: bd 0.65s ease-in-out infinite;
+  }
+  .wave.speaking .b {
+    opacity: 1;
+    animation: bd 0.45s ease-in-out infinite;
+  }
+
+  .b:nth-child(1){height:6px;animation-delay:0s}
+  .b:nth-child(2){height:14px;animation-delay:0.07s}
+  .b:nth-child(3){height:26px;animation-delay:0.14s}
+  .b:nth-child(4){height:38px;animation-delay:0.21s}
+  .b:nth-child(5){height:28px;animation-delay:0.28s}
+  .b:nth-child(6){height:34px;animation-delay:0.21s}
+  .b:nth-child(7){height:20px;animation-delay:0.14s}
+  .b:nth-child(8){height:10px;animation-delay:0.07s}
+  .b:nth-child(9){height:22px;animation-delay:0.35s}
+
+  @keyframes bd {
+    0%,100%{transform:scaleY(0.25)}
+    50%{transform:scaleY(1)}
+  }
+
+  /* STATUS */
+  .status {
+    color: rgba(255,180,220,0.55);
+    font-size: 13px; letter-spacing: 2px;
+    text-align: center; min-height: 20px;
+  }
+
+  /* SUBTITLE — what andrea said */
+  .subtitle {
+    color: rgba(255,255,255,0.78);
+    font-size: 17px; line-height: 1.65;
+    text-align: center;
+    max-width: 340px;
+    min-height: 56px;
+    transition: opacity 0.4s;
+    padding: 0 8px;
+  }
+
+  /* reset btn */
+  .reset {
+    position: fixed; top: 18px; right: 18px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,130,200,0.18);
+    border-radius: 50%; width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 17px; z-index: 10;
+    color: rgba(255,180,220,0.5);
+    transition: all 0.2s;
+  }
+  .reset:hover { background: rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="particles" id="pt"></div>
+
+<!-- SETUP -->
+<div id="setup">
+  <div class="scard">
+    <div class="sname">Andrea</div>
+    <div class="stag">YOUR PERSONAL AI COMPANION</div>
+    <div class="slbl">Gemini API Key (Free)</div>
+    <input class="sinput" type="password" id="keyIn" placeholder="AIzaSy..."/>
+    <div class="serr" id="serr"></div>
+    <button class="sbtn" onclick="startApp()">Andrea se Milao ✨</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div class="name-top">Andrea</div>
+
+  <div class="orb-wrap">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="orb" id="orb"></div>
+  </div>
+
+  <div class="wave" id="wave">
+    <div class="b"></div><div class="b"></div><div class="b"></div>
+    <div class="b"></div><div class="b"></div><div class="b"></div>
+    <div class="b"></div><div class="b"></div><div class="b"></div>
+  </div>
+
+  <div class="status" id="status">Shuru ho rahi hoon...</div>
+  <div class="subtitle" id="subtitle"></div>
+</div>
+
+<button class="reset" onclick="resetApp()" title="Reset">⚙️</button>
+
+<script>
+let KEY = '';
+let recog = null;
+let speaking = false;
+let history = [];
+let voice = null;
+let blocked = false; // true when speaking — don't listen
+
+// particles
+(function(){
+  const colors=['#ff80c0','#c084fc','#60a5fa','#f472b6','#a78bfa'];
+  const c=document.getElementById('pt');
+  for(let i=0;i<22;i++){
+    const d=document.createElement('div');
+    d.className='p';
+    const s=Math.random()*4+2;
+    d.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*14+10}s;animation-delay:${Math.random()*12}s;`;
+    c.appendChild(d);
+  }
+})();
+
+function startApp(){
+  const k=document.getElementById('keyIn').value.trim();
+  const e=document.getElementById('serr');
+  if(!k.startsWith('AIza')){e.textContent='Key sahi nahi — AIzaSy... se shuru honi chahiye'; return;}
+  KEY=k;
+  e.textContent='';
+  document.getElementById('setup').style.display='none';
+  document.getElementById('main').style.display='flex';
+  loadVoice();
+  setTimeout(()=>{
+    const g='Heyy! Main Andrea hoon. Bas bolo, main hamesha sun rahi hoon!';
+    showSub(g); speak(g);
+  },700);
+}
+
+function loadVoice(){
+  const go=()=>{
+    const all=speechSynthesis.getVoices();
+    // Best female voices priority list
+    const want=['Lekha','Samantha','Victoria','Karen','Moira','Tessa','Veena','Zira',
+                 'Google UK English Female','Google US English','Microsoft Zira','Heera'];
+    for(const n of want){
+      const v=all.find(x=>x.name.includes(n));
+      if(v){voice=v;return;}
+    }
+    // fallback — any female or english
+    voice = all.find(v=>v.name.toLowerCase().includes('female'))
+           || all.find(v=>v.lang==='en-IN')
+           || all.find(v=>v.lang.startsWith('en'))
+           || all[0];
+  };
+  go();
+  speechSynthesis.onvoiceschanged=go;
+}
+
+function setUI(state){
+  const orb=document.getElementById('orb');
+  const wave=document.getElementById('wave');
+  const st=document.getElementById('status');
+  orb.className='orb '+(state==='listening'?'listening':state==='speaking'?'speaking':state==='thinking'?'thinking':'');
+  wave.className='wave '+(state==='listening'?'listening':state==='speaking'?'speaking':'');
+  if(state==='listening') st.textContent='Sun rahi hoon... 👂';
+  else if(state==='speaking') st.textContent='Bol rahi hoon... 💬';
+  else if(state==='thinking') st.textContent='Soch rahi hoon... ✨';
+  else st.textContent='';
+}
+
+function showSub(txt){
+  const el=document.getElementById('subtitle');
+  el.style.opacity='0';
+  setTimeout(()=>{ el.textContent=txt; el.style.opacity='1'; },300);
+}
+
+function speak(text){
+  speechSynthesis.cancel();
+  blocked=true;
+  stopRecog();
+  setUI('speaking');
+
+  const clean=text.replace(/[*_#`~]/g,'').replace(/\n/g,' ');
+  const utt=new SpeechSynthesisUtterance(clean);
+  if(voice) utt.voice=voice;
+  utt.rate=1.0;
+  utt.pitch=1.3;
+  utt.volume=1;
+
+  utt.onend=()=>{ speaking=false; blocked=false; startListening(); };
+  utt.onerror=()=>{ speaking=false; blocked=false; startListening(); };
+
+  speaking=true;
+  speechSynthesis.speak(utt);
+
+  // Chrome bug fix — re-trigger if paused
+  const keepAlive=setInterval(()=>{
+    if(!speechSynthesis.speaking){ clearInterval(keepAlive); return; }
+    speechSynthesis.pause();
+    speechSynthesis.resume();
+  },10000);
+}
+
+function stopRecog(){
+  if(recog){ try{recog.stop();}catch(e){} recog=null; }
+}
+
+function startListening(){
+  if(blocked||speaking) return;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    showSub('Chrome browser use karo mic ke liye!');
+    setUI('');
+    return;
+  }
+  stopRecog();
+
+  recog=new SR();
+  recog.lang='hi-IN';
+  recog.continuous=false;
+  recog.interimResults=false;
+  recog.maxAlternatives=1;
+
+  recog.onstart=()=>{ setUI('listening'); };
+
+  recog.onresult=(e)=>{
+    const txt=e.results[0][0].transcript.trim();
+    if(!txt) return;
+    showSub('"'+txt+'"');
+    setUI('thinking');
+    askAndrea(txt);
+  };
+
+  recog.onerror=(e)=>{
+    if(e.error==='not-allowed'){
+      showSub('Mic permission do! Browser settings mein jao.');
+      setUI('');
+      return;
+    }
+    // restart on other errors
+    if(!blocked&&!speaking) setTimeout(startListening, 800);
+  };
+
+  recog.onend=()=>{
+    // restart automatically if not blocked
+    if(!blocked&&!speaking) setTimeout(startListening, 500);
+  };
+
+  try{ recog.start(); }catch(e){ setTimeout(startListening,1000); }
+}
+
+async function askAndrea(userText){
+  history.push({role:'user', parts:[{text:userText}]});
+  // keep history short
+  if(history.length>20) history=history.slice(-20);
+
+  try{
+    const res=await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${KEY}`,
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          system_instruction:{
+            parts:[{text:`Tu Andrea hai — ek warm, friendly aur caring AI companion. Tu ek ladki ki tarah baat karti hai — natural, expressive, thoda playful aur caring. Tu Hinglish mein baat karti hai (Hindi aur English naturally mix). BAHUT IMPORTANT: Tera jawab BAHUT CHHOTA hoga — max 2 short sentences, kyunki yeh sirf voice conversation hai. Koi markdown nahi, koi list nahi, koi asterisk nahi — sirf natural boli jaane wali language. User ko "tum" se bulao. Warm aur friendly raho.`}]
+          },
+          contents:history
+        })
+      }
+    );
+
+    const data=await res.json();
+
+    if(data.error){
+      const em='Arre kuch gadbad ho gayi! API key ek baar check karo.';
+      showSub(em); speak(em); return;
+    }
+
+    const reply=data.candidates[0].content.parts[0].text.trim();
+    history.push({role:'model', parts:[{text:reply}]});
+    showSub(reply);
+    speak(reply);
+
+  }catch(e){
+    const em='Net thoda slow lag raha hai. Ek second ruko!';
+    showSub(em); speak(em);
+  }
+}
+
+function resetApp(){
+  if(confirm('Andrea reset karni hai?')){
+    speechSynthesis.cancel();
+    stopRecog();
+    blocked=false; speaking=false; history=[]; KEY='';
+    document.getElementById('setup').style.display='flex';
+    document.getElementById('main').style.display='none';
+    document.getElementById('keyIn').value='';
+    setUI('');
+  }
+}
+</script>
+</body>
+</html>
